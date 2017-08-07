@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>轮播</title>
+</head>
+<style>
+    * {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .carousel {
+        display: block;
+        width: 600px;
+        height: 400px;
+        position: relative;
+        margin: 50px auto;
+        overflow: hidden;
+    }
+
+    .img-ct {
+        position: absolute;
+        width: 1800px;
+        height: 400px;
+        margin: 50px auto;
+        display: block;
+    }
+
+    .img-ct:after {
+        content: '';
+        display: block;
+        clear: both;
+    }
+
+    .img-ct li {
+        float: left;
+    }
+
+    .img-ct img {
+        width: 600px;
+        height: 400px;
+    }
+
+    .btn {
+        position: absolute;
+        top: 50%;
+        margin-top: 5px;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: #333;
+        opacity: 0.6;
+        text-decoration: none;
+        color: #FFF;
+        text-align: center;
+        line-height: 30px;
+        display: block;
+    }
+
+    .btn-prev {
+        left: 0;
+    }
+
+    .btn-next {
+        right: 0;
+    }
+
+    .carousel .bullet {
+        position: absolute;
+        left: 50%;
+        margin-left: -83px;
+        bottom: 1px;
+
+    }
+
+    .carousel .bullet:after {
+        content: '';
+        display: block;
+        clear: both;
+    }
+
+    .carousel .bullet li {
+        width: 18px;
+        height: 18px;
+        line-height: 18px;
+        text-align: center;
+        background-color: #3e3e3e;
+        float: left;
+        margin: 0 3px;
+        border-radius: 50%;
+        color: white;
+        font-size: 12px;
+    }
+
+    .carousel .bullet .active {
+        background-color:green;
+    }
+
+</style>
+<body>
+<div class="carousel">
+    <ul class="img-ct">
+        <li data-index=0><a href="#"><img src="images/1.jpg" alt="1.jpg"/></a></li>
+        <li data-index=1><a href="#"><img src="images/2.jpg" alt="2.jpg"/></a></li>
+        <li data-index=2><a href="#"><img src="images/3.jpg" alt="3.jpg"/></a></li>
+        <li data-index=3><a href="#"><img src="images/4.jpg" alt="4.jpg"/></a></li>
+        <li data-index=4><a href="#"><img src="images/5.jpg" alt="5.jpg"/></a></li>
+        <li data-index=5><a href="#"><img src="images/6.jpg" alt="6.jpg"/></a></li>
+        <li data-index=6><a href="#"><img src="images/7.jpg" alt="7.jpg"/></a></li>
+    </ul>
+
+    <a class="btn btn-prev" href="#">&lt;</a>
+    <a class="btn btn-next" href="#">&gt;</a>
+
+    <ul class="bullet">
+        <li class="active">1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li>6</li>
+        <li>7</li>
+    </ul>
+</div>
+
+<script src="js/jquery-1.11.1.js"></script>
+<script>
+    $(function () {
+                var $imgCt = $('.img-ct'),
+                        $prevBtn = $('.btn-prev'),
+                        $nextBtn = $('.btn-next'),
+                        $bullet = $('.bullet');
+
+                var $firstImg = $imgCt.find('li').first(),
+                        $lastImg = $imgCt.find('li').last();
+
+                var curPage = 0;
+                var imgLength = $imgCt.children().length;
+                var isAnimate = false;//给重复点击加锁
+
+
+                $imgCt.prepend($lastImg.clone());
+                $imgCt.append($firstImg.clone());
+
+                $imgCt.width($firstImg.width() * $imgCt.children().length);
+                $imgCt.css('left', '-600px');
+
+
+                function playNext() {
+                    if (isAnimate) {
+                        return;
+                    }
+                    isAnimate = true;
+
+                    $imgCt.animate({
+                        left: '-=600'
+                    }, function () {
+                        curPage++;
+                        if (curPage == imgLength) {
+                            $imgCt.css({'left': '-600px'});
+                            curPage = 0;
+                        }
+                        isAnimate = false;
+                        setBullet();
+                    })
+                }
+
+                function playPrev() {
+                    if (isAnimate) {
+                        return;
+                    }
+                    isAnimate = true;
+
+                    $imgCt.animate({
+                        left: '+=600'
+                    }, function () {
+                        curPage--;
+                        if (curPage < 0) {
+                            $imgCt.css({'left': -(imgLength * $firstImg.width())});
+                            curPage = imgLength - 1;
+                        }
+                        isAnimate = false;
+                        setBullet();
+                    })
+                }
+
+
+                $prevBtn.on('click', function (e) {
+                    e.preventDefault();
+                    playPrev();
+                });
+
+
+                $nextBtn.on('click', function (e) {
+                    e.preventDefault();
+                    playNext();
+                });
+
+                function setBullet() {
+                    $bullet.children().removeClass('active')
+                            .eq(curPage).addClass('active');
+                }
+
+
+            }
+    )
+
+
+</script>
+
+</body>
+</html>
